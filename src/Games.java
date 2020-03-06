@@ -56,7 +56,7 @@ public class Games {
                 System.out.println("Ход противника");
                 for (int i = 0; i < 7; i++) {
                     System.out.print(" * ");
-                    Thread.sleep(500);
+                    Thread.sleep(100);
                 }
                 System.out.println();
                 if (isWin(DOT_O, tab)) {
@@ -87,38 +87,36 @@ public class Games {
     }
 
     private static void movePC(char[][] tab) {
-        int x = 0, y = 0, sx = 0, sy = 0, d1 = 0, d2 = 0;
-        for (int i = 0; i < tab.length; i++) {
-            for (int j = 0; j < tab.length; j++) {
-                if (tab[i][j] == DEFAULT) {
-                    tab[i][j] = DOT_X;
-                }
-                sx += tab[i][j] == size ? 1 : 0;
-                sy += tab[j][i] == size ? 1 : 0;
-                d1 += tab[j][j] == size ? 1 : 0;
-                d2 += tab[j][tab.length - j - 1] == size ? 1 : 0;
-                if (sx == tab.length || sy == tab.length || d1 == tab.length
-                        || d2 == tab.length) {
-                    x = i;
-                    y = j;
-                } else {
-                    x = rnd.nextInt(tab.length);
-                    y = rnd.nextInt(tab.length);
-                }
+//Логика следующая: делаем дубликат нашего массива, проверяем его на заполняемость
+// (если в таблице есть пустой это мы его заполняем Х, проверям выигрыш, если true,
+// то тогда x приcваем значение i, значению y = j, как координаты в массиве
+        int x=1, y=1;
+        char tab1[][] = tab;
 
+        for (int i = 0; i < tab1.length; i++) {
+            for (int j = 0; j < tab1.length; j++) {
+                if (tab1[i][j] == DEFAULT) {
+                    tab1[i][j] = DOT_X;
+                    if (isWin(DOT_X, tab1)) {
+                        x = i;
+                        y = j;
+                        return;
+                    } else {
+                        x = rnd.nextInt(tab.length);
+                        y = rnd.nextInt(tab.length);
+                    }
+                }
 
             }
 
-
-
-            if (isValidStep(x, y, tab)) {
-                tab[x][y] = DOT_O;
-                stepCounter++;
-                return;
-            }
         }
-
+        if (isValidStep(x, y, tab)) {
+            tab[x][y] = DOT_O;
+            stepCounter++;
+            return;
+        }
     }
+
 
     private static boolean isValidStep(int x, int y, char[][] tab) {
         int size = tab.length;
